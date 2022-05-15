@@ -64,6 +64,11 @@ public class Program
 
         public void InsertAtPosition(int position, Node nodeToInsert)
         {
+            if (Head == null)
+            {
+                SetHead(nodeToInsert);
+                return;
+            }
             Node prevNode = Head;
             for (int i = 1; i < position; i++)
             {
