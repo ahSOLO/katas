@@ -44,6 +44,7 @@ public class Program
 
             nodeToInsert.SetPrev(prevNode);
             nodeToInsert.SetNext(node);
+            node.Prev?.SetNext(nodeToInsert);
             node.SetPrev(nodeToInsert);
         }
 
@@ -64,13 +65,13 @@ public class Program
         public void InsertAtPosition(int position, Node nodeToInsert)
         {
             Node prevNode = Head;
-            for (int i = 0; i < position; i++)
+            for (int i = 1; i < position; i++)
             {
                 if (prevNode.Next == null) break;
                 
                 prevNode = prevNode.Next;
             }
-            InsertAfter(prevNode, nodeToInsert);
+            InsertBefore(prevNode, nodeToInsert);
         }
 
         public void RemoveNodesWithValue(int value)
@@ -87,9 +88,10 @@ public class Program
 
         public void Remove(Node node)
         {
-            Node temp = node.Prev;
+            if (node == Head) Head = node.Next;
+            if (node == Tail) Tail = node.Prev;
             node.Prev?.SetNext(node.Next ?? null);
-            node.Next?.SetPrev(temp ?? null);
+            node.Next?.SetPrev(node.Prev ?? null);
             node.SetPrev(null);
             node.SetNext(null);
         }
