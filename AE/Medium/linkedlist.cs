@@ -18,7 +18,6 @@ public class Program
             {
                 InsertBefore(Head, node);
             }
-
         }
 
         public void SetTail(Node node)
@@ -38,14 +37,12 @@ public class Program
             Node prevNode = node.Prev ?? null;
             if (node == Head) Head = nodeToInsert;
 
-            Node temp = nodeToInsert.Prev;
-            nodeToInsert.Prev?.SetNext(nodeToInsert.Next);
-            nodeToInsert.Next?.SetPrev(temp);
+            Remove(nodeToInsert);
 
-            nodeToInsert.SetPrev(prevNode);
-            nodeToInsert.SetNext(node);
-            node.Prev?.SetNext(nodeToInsert);
-            node.SetPrev(nodeToInsert);
+            SetPrev(nodeToInsert, prevNode);
+            SetNext(nodeToInsert, node);
+            if (prevNode != null) SetNext(prevNode, nodeToInsert);
+            SetPrev(node, nodeToInsert);
         }
 
         public void InsertAfter(Node node, Node nodeToInsert)
@@ -53,13 +50,12 @@ public class Program
             Node nextNode = node.Next ?? null;
             if (node == Tail) Tail = nodeToInsert;
 
-            node.SetNext(nodeToInsert);
-            nodeToInsert.Prev?.SetNext(nodeToInsert.Next ?? null);
-            nodeToInsert.Next?.SetPrev(nodeToInsert.Prev ?? null);
+            Remove(nodeToInsert);
             
-            nodeToInsert.SetPrev(node);
-            nodeToInsert.SetNext(nextNode);
-            nextNode?.SetPrev(node);
+            SetPrev(nodeToInsert, node);
+            SetNext(nodeToInsert, nextNode);
+            if (nextNode != null) SetPrev(nextNode, nodeToInsert);
+            SetNext(node, nodeToInsert);
         }
 
         public void InsertAtPosition(int position, Node nodeToInsert)
@@ -76,7 +72,8 @@ public class Program
                 
                 prevNode = prevNode.Next;
             }
-            InsertBefore(prevNode, nodeToInsert);
+            if (prevNode != nodeToInsert) InsertBefore(prevNode, nodeToInsert);
+            Console.WriteLine($"After Insertion At Position: {nodeToInsert.ToString()}");
         }
 
         public void RemoveNodesWithValue(int value)
@@ -95,10 +92,11 @@ public class Program
         {
             if (node == Head) Head = node.Next;
             if (node == Tail) Tail = node.Prev;
-            node.Prev?.SetNext(node.Next ?? null);
-            node.Next?.SetPrev(node.Prev ?? null);
-            node.SetPrev(null);
-            node.SetNext(null);
+            var temp = node.Prev;
+            if (node.Prev != null) SetNext(node.Prev, node.Next ?? null);
+            if (node.Next != null) SetPrev(node.Next, temp ?? null);
+            SetPrev(node, null);
+            SetNext(node, null);
         }
 
         public bool ContainsNodeWithValue(int value)
@@ -115,6 +113,20 @@ public class Program
             return SearchRecursive(node.Next, value);
         }
 
+        private void SetPrev(Node nodeToSet, Node prev)
+        {
+            if (nodeToSet == Head && prev != null) Head = prev;
+            if (prev != null && prev == Tail && prev.Prev != null) Tail = prev.Prev;
+            nodeToSet.Prev = prev;
+        }
+
+        private void SetNext(Node nodeToSet, Node next)
+        {
+            if (nodeToSet == Tail && next != null) Tail = next;
+            if (next != null && next == Head && next.Next != null) Head = next.Next;
+            nodeToSet.Next = next;
+        }
+
     }
 
     // Do not edit the class below.
@@ -129,14 +141,9 @@ public class Program
             this.Value = value;
         }
 
-        public void SetPrev(Node prev)
+        public override string ToString()
         {
-            Prev = prev;
-        }
-
-        public void SetNext(Node next)
-        {
-            Next = next;
+            return $"Value: {Value}, Prev: {Prev?.Value}, Next: {Next?.Value}";
         }
     }
 }
