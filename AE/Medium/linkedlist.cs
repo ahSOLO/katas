@@ -6,9 +6,28 @@ public class Program
     {
         public Node Head;
         public Node Tail;
+        
+        public void PrintList(Node node = null)
+        {
+            if (node == null)
+            {
+                if (Head == null)
+                {
+                    Console.WriteLine("List is empty.");
+                    return;
+                }
+                else node = Head;
+            }
+            Console.WriteLine(node);
+            if (node.Next != null) PrintList(node.Next);
+            else Console.WriteLine("List end.");
+        }
 
         public void SetHead(Node node)
         {
+            Console.WriteLine($"Setting Head to {node.Value}");
+            if (Head == node) return;
+            
             if (Head == null)
             {
                 Head = node;
@@ -18,10 +37,15 @@ public class Program
             {
                 InsertBefore(Head, node);
             }
+
+            PrintList();
         }
 
         public void SetTail(Node node)
         {
+            Console.WriteLine($"Setting Tail to {node.Value}");
+            if (Tail == node) return;
+
             if (Tail == null)
             {
                 SetHead(node);
@@ -30,54 +54,79 @@ public class Program
             {
                 InsertAfter(Tail, node);
             }
+
+            PrintList();
         }
 
         public void InsertBefore(Node node, Node nodeToInsert)
         {
-            Node prevNode = node.Prev ?? null;
-            if (node == Head) Head = nodeToInsert;
+            Console.WriteLine($"Inserting {nodeToInsert.Value} before {node.Value}");
+            if (node.Prev == nodeToInsert) return; // Return if the nodes are already in the correct place.
+            
+            Node prevNode = node.Prev;
 
             Remove(nodeToInsert);
 
+            if (node == Head) Head = nodeToInsert;
             SetPrev(nodeToInsert, prevNode);
             SetNext(nodeToInsert, node);
             if (prevNode != null) SetNext(prevNode, nodeToInsert);
             SetPrev(node, nodeToInsert);
+
+            PrintList();
         }
 
         public void InsertAfter(Node node, Node nodeToInsert)
         {
-            Node nextNode = node.Next ?? null;
-            if (node == Tail) Tail = nodeToInsert;
+            Console.WriteLine($"Inserting {nodeToInsert.Value} after {node.Value}");
+            if (node.Next == nodeToInsert) return; // Return if the nodes are already in the correct place.
 
+            Node nextNode = node.Next;
             Remove(nodeToInsert);
             
+            if (node == Tail) Tail = nodeToInsert;
             SetPrev(nodeToInsert, node);
             SetNext(nodeToInsert, nextNode);
             if (nextNode != null) SetPrev(nextNode, nodeToInsert);
             SetNext(node, nodeToInsert);
+
+            PrintList();
         }
 
         public void InsertAtPosition(int position, Node nodeToInsert)
         {
-            if (Head == null)
+            Console.WriteLine($"Inserting {nodeToInsert.Value} at position {position}");
+
+            if (Head == null || position <= 1)
             {
                 SetHead(nodeToInsert);
-                return;
             }
-            Node prevNode = Head;
+            Node nthNode = GetNodeAtPosition(position);
+            if (nthNode == null)
+            {
+                SetTail(nodeToInsert);
+            }
+            else if (nthNode != nodeToInsert)
+            {
+                InsertBefore(nthNode, nodeToInsert);
+            }
+
+            PrintList();
+        }
+
+        public Node GetNodeAtPosition(int position)
+        {
+            Node node = Head;
             for (int i = 1; i < position; i++)
             {
-                if (prevNode.Next == null) break;
-                
-                prevNode = prevNode.Next;
+                node = node?.Next;
             }
-            if (prevNode != nodeToInsert) InsertBefore(prevNode, nodeToInsert);
-            Console.WriteLine($"After Insertion At Position: {nodeToInsert.ToString()}");
+            return node;
         }
 
         public void RemoveNodesWithValue(int value)
         {
+            Console.WriteLine($"Removing nodes with value {value}");
             Node foundNode = SearchRecursive(Head, value);
             while (foundNode != null)
             {
@@ -86,10 +135,14 @@ public class Program
                 if (nextNode != null) foundNode = SearchRecursive(nextNode, value);
                 else foundNode = null;
             }
+
+            PrintList();
         }
 
         public void Remove(Node node)
         {
+            Console.WriteLine($"Removing node {node} from list");
+
             if (node == Head) Head = node.Next;
             if (node == Tail) Tail = node.Prev;
             var temp = node.Prev;
@@ -97,6 +150,8 @@ public class Program
             if (node.Next != null) SetPrev(node.Next, temp ?? null);
             SetPrev(node, null);
             SetNext(node, null);
+
+            PrintList();
         }
 
         public bool ContainsNodeWithValue(int value)
