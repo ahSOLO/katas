@@ -17,68 +17,46 @@ public class Program
 		}
 	}
 
+	public int SumLinkedListNodes(LinkedList nodeOne, LinkedList nodeTwo, int c)
+	{
+		return ((nodeOne != null ? nodeOne.value : 0) + (nodeTwo != null ? nodeTwo.value : 0) + c);
+	}
+
 	public LinkedList SumOfLinkedLists(LinkedList linkedListOne, LinkedList linkedListTwo)
 	{
 		LinkedList output = null;
 		LinkedList head = null;
-		int higherDigits = 0;
-		while (linkedListOne != null && linkedListTwo != null)
+		int carry = 0;
+
+		head = new LinkedList(0);
+
+		while (linkedListOne != null || linkedListTwo != null || carry != 0)
         {
-			var newNode = new LinkedList(linkedListOne.value + linkedListTwo.value + higherDigits);
-			if (output == null)
-            {
-				output = newNode;
-				head = output;
+			var strNum = SumLinkedListNodes(linkedListOne, linkedListTwo, carry).ToString();
+
+			string higherDigitsStr = strNum.Substring(0, strNum.Length - 1);
+			if (higherDigitsStr.Length > 0)
+			{
+				carry = int.Parse(higherDigitsStr);
 			}
 			else
+			{
+				carry = 0;
+			}
+
+			if (output == null)
             {
-				output.next = newNode;
+				output = head;
+				output.value = int.Parse(strNum.Substring(strNum.Length - 1));
+            } 
+			else
+            {
+				output.next = new LinkedList(int.Parse(strNum.Substring(strNum.Length - 1)));
 				output = output.next;
             }
 
-			string strNum = output.value.ToString();
-			output.value = int.Parse(strNum.Substring(strNum.Length - 1));
-
-			string higherDigitsStr = strNum.Substring(0, strNum.Length - 1);
-			if (higherDigitsStr.Length > 0)
-            {
-				higherDigits = int.Parse(higherDigitsStr);
-            }
-			else
-            {
-				higherDigits = 0;
-            }
-			
-			linkedListOne = linkedListOne.next;
-			linkedListTwo = linkedListTwo.next;
-        }
-
-		while (linkedListOne != null || linkedListTwo != null)
-        {			
-			output.next = new LinkedList(higherDigits + (linkedListOne != null ? linkedListOne.value : linkedListTwo.value));
-
-			string strNum = output.value.ToString();
-			output.value = int.Parse(strNum.Substring(strNum.Length - 1));
-
-			string higherDigitsStr = strNum.Substring(0, strNum.Length - 1);
-			if (higherDigitsStr.Length > 0)
-			{
-				higherDigits = int.Parse(higherDigitsStr);
-			}
-			else
-			{
-				higherDigits = 0;
-			}
-
-			output = output.next;
-
 			linkedListOne = linkedListOne?.next;
 			linkedListTwo = linkedListTwo?.next;
-        }
-
-		if (higherDigits != 0)
-        {
-			output.next = new LinkedList(higherDigits);
         }
 
 		return head;
