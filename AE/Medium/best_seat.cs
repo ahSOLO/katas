@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class Program {
 
+// Assume someone is always sitting in first and last seat of the row
 	public int BestSeat(int[] seats) {
         int longestChainStart = 0;
         int longestChainLength = 0;
@@ -14,7 +15,7 @@ public class Program {
         {
             if (seats[i] == 0)
             {
-                if (i == 0 || seats[i-1] == 1)
+                if (seats[i-1] == 1)
                 {
                     currentChainStart = i;
                     currentChainLength = 1;                    
@@ -34,12 +35,6 @@ public class Program {
             }
         }
 
-        if (longestChainLength < currentChainLength)
-        {
-            longestChainStart = currentChainStart;
-            longestChainLength = currentChainLength;
-        }
-        
 		return longestChainLength != 0 ? longestChainStart + ((longestChainLength - 1)/ 2) : -1;
 	}
 }
