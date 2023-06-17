@@ -4,9 +4,15 @@ class Solution:
             return point[0]**2 + point[1]**2
         
         minHeap = []
+        
         for point in points:
-            heapq.heappush(minHeap, [SqrdDistance(point), point[0], point[1]])
+            minHeap.append([SqrdDistance(point), point[0], point[1]])
+        #heap pushing each element is O(nlogn)
+        #    heapq.heappush(minHeap, [SqrdDistance(point), point[0], point[1]])
 
+        #heapify is O(n)
+        heapq.heapify(minHeap)
+        
         output = []
         for i in range(0, k):
             entry = heapq.heappop(minHeap)
