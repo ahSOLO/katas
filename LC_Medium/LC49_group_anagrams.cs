@@ -3,7 +3,7 @@
 //   Append a dictionary entry with the sorted letters as the key and the word as the value (appended to a list)
 // For each value in the dictionary, Add the full list to an array.
 
-// Time - O(nlogn)
+// Time - O(nklogk), where k = max str length
 // Space - O(n)
 
 public class Solution {
